@@ -2,11 +2,13 @@ package com.asset.management.controller;
 
 import com.asset.management.entity.User;
 import com.asset.management.entity.UserBo;
+import com.asset.management.service.TokenService;
 import com.asset.management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.Result;
 import java.util.List;
 
@@ -14,6 +16,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private TokenService tokenService;
 
     /**
      * 分页显示所有用户信息
@@ -27,7 +31,7 @@ public class UserController {
     }
 
     @RequestMapping("/login")
-    public String login(@RequestBody UserBo bo){
+    public String login(@RequestBody UserBo bo, HttpServletRequest request){
         // 登录密码
         String password = bo.getPassword();
         // 登录手机号
@@ -38,7 +42,9 @@ public class UserController {
         }else if(!user.getPassword().equals(password)){
             return "error";
         }
-        return "success";
+        String token = tokenService.getToken(user);
+        return token;
+//        return "success";
     }
 
     /**
