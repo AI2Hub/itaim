@@ -1,16 +1,16 @@
 package com.asset.management.controller;
 
+import com.asset.management.entity.ResultSet;
 import com.asset.management.entity.User;
 import com.asset.management.entity.UserBo;
 import com.asset.management.service.TokenService;
 import com.asset.management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.transform.Result;
-import java.util.List;
 
 @RestController
 public class UserController {
@@ -31,20 +31,23 @@ public class UserController {
     }
 
     @RequestMapping("/login")
-    public String login(@RequestBody UserBo bo, HttpServletRequest request){
+    public ResultSet login(@RequestBody UserBo bo, HttpServletRequest request){
         // 登录密码
         String password = bo.getPassword();
         // 登录手机号
         String name = bo.getName();
         User user = userService.findByName(name);
+        ResultSet resultSet = new ResultSet();
         if(user == null || password==null){
-            return "error";
+            resultSet.setSuccess(false);
+            return resultSet;
         }else if(!user.getPassword().equals(password)){
-            return "error";
+            resultSet.setSuccess(false);
+            return resultSet;
         }
-        String token = tokenService.getToken(user);
-        return token;
-//        return "success";
+//        String token = tokenService.getToken(user);
+        resultSet.setSuccess(true);
+        return resultSet;
     }
 
     /**

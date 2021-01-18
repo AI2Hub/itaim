@@ -83,18 +83,23 @@ public class AssetService {
         return "success";
     }
 
-    public List<Optional<Asset>> bathFindAsset(String ids){
-        List idList = Arrays.asList(ids.split(","));
-        List<Optional<Asset>> list = new ArrayList<>();
-        idList.forEach(id ->{
-            Integer assetId = Integer.parseInt((String) id);
-            list.add(assetDao.findById(assetId));
-        });
-        return list;
-    }
-
-
-//    public Asset findById(int id){
-//        return assetDao.findById(id);
+//    public List<Optional<Asset>> bathFindAsset(String ids){
+//        List idList = Arrays.asList(ids.split(","));
+//        List<Optional<Asset>> list = new ArrayList<>();
+//        idList.forEach(id ->{
+//            Integer assetId = Integer.parseInt((String) id);
+//            list.add(assetDao.findById(assetId));
+//        });
+//        return list;
 //    }
+
+    public List<Asset> bathFindAsset(String ids){
+    List idList = Arrays.asList(ids.split(","));
+    List<Asset> list = new ArrayList<>();
+    idList.forEach(id ->{
+        int assetId = Integer.parseInt((String) id);
+        list.add(assetDao.findById(assetId));
+    });
+    return list;
+}
 }

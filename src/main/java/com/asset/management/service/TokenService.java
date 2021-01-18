@@ -1,8 +1,6 @@
 package com.asset.management.service;
 
 import com.asset.management.entity.User;
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -15,8 +13,8 @@ public class TokenService {
         Date end = new Date(currentTime);
         String token = "";
 
-        token = JWT.create().withAudience(user.getName()).withIssuedAt(start).withExpiresAt(end)
-                .sign(Algorithm.HMAC256(user.getPassword()));
+//        token = JWT.create().withAudience(user.getName()).withIssuedAt(start).withExpiresAt(end)
+//                .sign(Algorithm.HMAC256(user.getPassword()));
         return token;
     }
 }

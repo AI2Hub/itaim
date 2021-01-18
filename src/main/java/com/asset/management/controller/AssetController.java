@@ -1,17 +1,20 @@
 package com.asset.management.controller;
 
 import com.asset.management.entity.Asset;
+import com.asset.management.entity.Asset2;
+import com.asset.management.entity.ResultSet;
 import com.asset.management.service.AssetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.util.DigestUtils;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class AssetController {
@@ -77,8 +80,25 @@ public class AssetController {
     }
 
     @RequestMapping("/addAsset")
-    public List<Optional<Asset>> addAsset(@RequestParam("ids") String ids){
-        List<Optional<Asset>> list = assetService.bathFindAsset(ids);
-        return list;
+    public ResultSet addAsset(@RequestParam("ids") String ids){
+//        List<Optional<Asset>> list = assetService.bathFindAsset(ids);
+        List<Asset> data = assetService.bathFindAsset(ids);
+
+        List<Integer> ret =  data.stream().map(Asset::getJobNumber).collect(Collectors.toList());
+        Map<String,Integer> collect = data.stream().collect(
+                Collectors.toMap(
+                        Asset::getAssetNumber,
+                        Asset::getJobNumber
+//                        ,(Asset1,Asset2)->Asset1
+                ));
+
+        ResultSet resultSet = new ResultSet();
+        resultSet.setData(collect);
+        long time = new Date().getTime();
+        resultSet.setTime(time);
+        String str = "qHSYjTfnh3MhXqBmnaWkPWx4w9pa7UkPCZLAR6fXG9wJX2VHzgKQ203868a71f188ed965682ac5a904b469xqg59ijt"+time;
+        String token = DigestUtils.md5DigestAsHex(str.getBytes());
+        resultSet.setToken(token);
+        return resultSet;
     }
 }
