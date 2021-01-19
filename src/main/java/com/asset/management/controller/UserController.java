@@ -3,11 +3,9 @@ package com.asset.management.controller;
 import com.asset.management.entity.ResultSet;
 import com.asset.management.entity.User;
 import com.asset.management.entity.UserBo;
-import com.asset.management.service.TokenService;
 import com.asset.management.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,8 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private TokenService tokenService;
 
     /**
      * 分页显示所有用户信息
