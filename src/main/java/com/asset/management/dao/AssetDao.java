@@ -22,6 +22,7 @@ public interface AssetDao extends JpaRepository<Asset,Integer>, JpaSpecification
     List<Asset> findByAssetNumber(String assetNumber);
 
     @Query(value="select * from AIM_assetsrelatedstatement where ID = ?1",nativeQuery = true)
-//    Optional<Asset> findById(Integer id);
     Asset findById(int id);
+
+
 }

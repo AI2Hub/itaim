@@ -83,23 +83,33 @@ public class AssetService {
         return "success";
     }
 
-//    public List<Optional<Asset>> bathFindAsset(String ids){
-//        List idList = Arrays.asList(ids.split(","));
-//        List<Optional<Asset>> list = new ArrayList<>();
-//        idList.forEach(id ->{
-//            Integer assetId = Integer.parseInt((String) id);
-//            list.add(assetDao.findById(assetId));
-//        });
-//        return list;
-//    }
-
+    /**
+     * 根据Ids查找资产数据
+     * @param ids 批量添加的id
+     * @return
+     */
     public List<Asset> bathFindAsset(String ids){
-    List idList = Arrays.asList(ids.split(","));
-    List<Asset> list = new ArrayList<>();
-    idList.forEach(id ->{
-        int assetId = Integer.parseInt((String) id);
-        list.add(assetDao.findById(assetId));
-    });
-    return list;
-}
+        List idList = Arrays.asList(ids.split(","));
+        List<Asset> list = new ArrayList<>();
+        idList.forEach(id ->{
+            int assetId = Integer.parseInt((String) id);
+            list.add(assetDao.findById(assetId));
+        });
+        return list;
+    }
+
+    /**
+     * 修改资产数据入库状态
+     * @param ids
+     * @return
+     */
+    public void updateAsset(String ids){
+        List idList = Arrays.asList(ids.split(","));
+        idList.forEach(id ->{
+            int assetId = Integer.parseInt((String) id);
+            Asset asset = assetDao.findById(assetId);
+            asset.setStatus("是");
+            assetDao.save(asset);
+        });
+    }
 }

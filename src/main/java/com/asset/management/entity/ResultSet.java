@@ -3,6 +3,7 @@ package com.asset.management.entity;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.Random;
 
 @Data
 public class ResultSet {
@@ -12,4 +13,5 @@ public class ResultSet {
     private Boolean success;
     private String token;
     private Long time;
+    private String random;
 }
