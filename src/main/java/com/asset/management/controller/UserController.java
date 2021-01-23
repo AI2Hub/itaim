@@ -1,5 +1,6 @@
 package com.asset.management.controller;
 
+import com.asset.management.annotation.LoginToken;
 import com.asset.management.entity.ResultSet;
 import com.asset.management.entity.User;
 import com.asset.management.entity.UserBo;
@@ -21,6 +22,7 @@ public class UserController {
      * @param size 每页数据行数
      * @return
      */
+    @LoginToken
     @RequestMapping("/listAll/{page}/{size}")
     public Page<User> listAll(@PathVariable("page") Integer page, @PathVariable("size") Integer size){
         return userService.listAll(page-1, size);
@@ -42,6 +44,7 @@ public class UserController {
             return resultSet;
         }
 //        String token = tokenService.getToken(user);
+        // 生成token代码
         resultSet.setSuccess(true);
         return resultSet;
     }

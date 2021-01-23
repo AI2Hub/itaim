@@ -32,6 +32,10 @@ public class UserService {
         return userDao.save(user);
     }
 
+    public User findByUserId(String userId){
+        return new User();
+    }
+
     public User updateUser(User user){
         return userDao.save(user);
     }
