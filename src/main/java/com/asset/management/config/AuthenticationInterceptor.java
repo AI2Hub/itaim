@@ -21,15 +21,34 @@ import java.lang.reflect.Method;
 public class AuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
     UserService userService;
+
+    /**
+     * 判断每个处理器是否符合要求，返回true表示符合要求，放行
+     * 这里主要是对user的id和password进行解密，如果要改变，还需要改变生成token的service
+     * @param httpServletRequest
+     * @param httpServletResponse
+     * @param object 拦截的对象
+     * @return
+     * @throws Exception
+     */
     @Override
-    public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object object) throws Exception {
-        String token = httpServletRequest.getHeader("token");// 从 http 请求头中取出 token
+    public boolean preHandle(HttpServletRequest httpServletRequest,
+                             HttpServletResponse httpServletResponse, Object object) throws Exception {
+        // 从 http 请求头中取出 token
+        String token = httpServletRequest.getHeader("authorization");
         // 如果不是映射到方法直接通过
         if(!(object instanceof HandlerMethod)){
             return true;
         }
+
+        // 放行option方法
+        if("OPTIONS".equals(httpServletRequest.getMethod())){
+            return true;
+        }
+
         HandlerMethod handlerMethod=(HandlerMethod)object;
         Method method=handlerMethod.getMethod();
+
         //检查是否有passtoken注释，有则跳过认证
         if (method.isAnnotationPresent(PassToken.class)) {
             PassToken passToken = method.getAnnotation(PassToken.class);
@@ -45,14 +64,14 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 if (token == null) {
                     throw new RuntimeException("无token，请重新登录");
                 }
-                // 获取 token 中的 user id
-                String userId;
+                // 获取 token 中的 username
+                String username;
                 try {
-                    userId = JWT.decode(token).getAudience().get(0);
+                    username = JWT.decode(token).getAudience().get(0);
                 } catch (JWTDecodeException j) {
                     throw new RuntimeException("401");
                 }
-                User user = userService.findByUserId(userId);
+                User user = userService.findByName(username);
                 if (user == null) {
                     throw new RuntimeException("用户不存在，请重新登录");
                 }
@@ -63,6 +82,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 } catch (JWTVerificationException e) {
                     throw new RuntimeException("401");
                 }
+                //将验证通过后的用户信息放到请求中
+                httpServletRequest.setAttribute("currentUser",user);
                 return true;
             }
         }

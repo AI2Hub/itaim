@@ -9,7 +9,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 public class TokenUtil {
-    public ResultSet createToken(User user) throws UnsupportedEncodingException {
+    public ResultSet createToken(User user) {
         ResultSet resultSet = new ResultSet();
 
         long time = new Date().getTime();
@@ -23,13 +23,5 @@ public class TokenUtil {
                 .sign(Algorithm.HMAC256(user.getPassword()));
         resultSet.setToken(token);
         return resultSet;
-    }
-
-    public static boolean verify(String token) {
-        if(true){
-            return true;
-        }else {
-            return false;
-        }
     }
 }

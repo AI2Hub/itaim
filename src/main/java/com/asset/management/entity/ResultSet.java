@@ -12,6 +12,7 @@ public class ResultSet {
     private Object data;
     private Boolean success;
     private String token;
+    private String tokenToOa;
     private Long time;
     private String random;
 }

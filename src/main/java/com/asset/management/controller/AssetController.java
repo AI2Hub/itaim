@@ -1,19 +1,22 @@
 package com.asset.management.controller;
 
+import com.asset.management.annotation.LoginToken;
+import com.asset.management.annotation.PassToken;
 import com.asset.management.entity.Asset;
 import com.asset.management.entity.ResultSet;
 import com.asset.management.service.AssetService;
+import com.asset.management.utils.HttpsUtils;
+import com.asset.management.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.DigestUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "*",maxAge = 3600)
 @RestController
 public class AssetController {
     @Autowired
@@ -53,6 +56,7 @@ public class AssetController {
      * @return
      */
     @RequestMapping("listByStatus")
+    @LoginToken
     public Page<Asset>listByStatus(@RequestParam("status")String status,
                                    @RequestParam("page") Integer page, @RequestParam("size") Integer size){
         Page data = assetService.listByStatus(status,page-1,size);
@@ -64,6 +68,7 @@ public class AssetController {
      * @param id
      */
     @RequestMapping("/deleteAsset")
+    @PassToken
     public void deleteAsset(@RequestParam("id")Integer id){
         assetService.deleteAsset(id);
     }
@@ -83,7 +88,8 @@ public class AssetController {
      * @return
      */
     @RequestMapping("/addAsset")
-    public ResultSet addAsset(@RequestParam("ids") String ids){
+    @LoginToken
+    public ResultSet addAsset(@RequestParam("ids") String ids) throws IOException {
         //根据id查询资产信息
         List<Asset> data = assetService.bathFindAsset(ids);
 
@@ -111,8 +117,27 @@ public class AssetController {
         resultSet.setTime(time);
         String str = appId+appSecret+interfaceId+"zdq888ji"+time;
         //MD5加密生成提交到OA的token
-        String token = DigestUtils.md5DigestAsHex(str.getBytes());
-        resultSet.setToken(token);
+        String tokenToOa = DigestUtils.md5DigestAsHex(str.getBytes());
+        resultSet.setTokenToOa(tokenToOa);
+
+        String oaUrl = "http://eicommon.37wan.com/api.php/taker/rouseInterface";
+        Map<String,Object> param = new HashMap<>();
+        Map<String,Object> oaData = new HashMap<>();
+        oaData.put("type","it_manager");
+        oaData.put("info",collect);
+        String oaJson = JsonUtils.deserializer(oaData);
+        System.out.println(oaJson);
+
+        param.put("data",oaJson);
+        param.put("appId",appId);
+        param.put("nonce","zdq888ji");
+        param.put("timestamp",time);
+        param.put("interfaceId",interfaceId);
+        param.put("token",tokenToOa);
+        String json = JsonUtils.deserializer(param);
+        String result = HttpsUtils.doPost(oaUrl,json);
+        System.out.println(result);
+        resultSet.setMsg(result);
 
         return resultSet;
     }

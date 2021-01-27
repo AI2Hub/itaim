@@ -1,10 +1,12 @@
 package com.asset.management.controller;
 
 import com.asset.management.annotation.LoginToken;
+import com.asset.management.annotation.PassToken;
 import com.asset.management.entity.ResultSet;
 import com.asset.management.entity.User;
 import com.asset.management.entity.UserBo;
 import com.asset.management.service.UserService;
+import com.asset.management.utils.TokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
+@CrossOrigin(origins = "*",maxAge = 3600)
 public class UserController {
     @Autowired
     private UserService userService;
@@ -22,14 +25,15 @@ public class UserController {
      * @param size 每页数据行数
      * @return
      */
-    @LoginToken
+
     @RequestMapping("/listAll/{page}/{size}")
+    @LoginToken
     public Page<User> listAll(@PathVariable("page") Integer page, @PathVariable("size") Integer size){
         return userService.listAll(page-1, size);
     }
 
     @RequestMapping("/login")
-    public ResultSet login(@RequestBody UserBo bo, HttpServletRequest request){
+    public ResultSet login(@RequestBody UserBo bo, HttpServletRequest request) {
         // 登录密码
         String password = bo.getPassword();
         // 登录手机号
@@ -38,13 +42,13 @@ public class UserController {
         ResultSet resultSet = new ResultSet();
         if(user == null || password==null){
             resultSet.setSuccess(false);
-            return resultSet;
         }else if(!user.getPassword().equals(password)){
             resultSet.setSuccess(false);
-            return resultSet;
         }
 //        String token = tokenService.getToken(user);
         // 生成token代码
+        TokenUtil tokenUtil = new TokenUtil();
+        resultSet = tokenUtil.createToken(user);
         resultSet.setSuccess(true);
         return resultSet;
     }
