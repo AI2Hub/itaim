@@ -59,13 +59,13 @@ public class UserController {
      * @return
      */
     @RequestMapping("/register")
-    public String register(@RequestBody User user){
+    public ResultSet register(@RequestBody User user){
         User result =  userService.addUser(user);
+        ResultSet resultSet = new ResultSet();
         if(result != null){
-            return "success";
-        }else {
-            return "error";
+            resultSet.setSuccess(true);
         }
+        return resultSet;
     }
 
     @RequestMapping("/findById")
