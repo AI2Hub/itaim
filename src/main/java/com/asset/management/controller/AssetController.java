@@ -7,6 +7,7 @@ import com.asset.management.entity.ResultSet;
 import com.asset.management.service.AssetService;
 import com.asset.management.utils.HttpsUtils;
 import com.asset.management.utils.JsonUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.util.DigestUtils;
@@ -122,22 +123,25 @@ public class AssetController {
 
         String oaUrl = "http://eicommon.37wan.com/api.php/taker/rouseInterface";
         Map<String,Object> param = new HashMap<>();
+
         Map<String,Object> oaData = new HashMap<>();
         oaData.put("type","it_manager");
         oaData.put("info",collect);
         String oaJson = JsonUtils.deserializer(oaData);
-        System.out.println(oaJson);
 
-        param.put("data",oaJson);
+        param.put("data",oaData);
         param.put("appId",appId);
         param.put("nonce","zdq888ji");
         param.put("timestamp",time);
         param.put("interfaceId",interfaceId);
         param.put("token",tokenToOa);
         String json = JsonUtils.deserializer(param);
+
         String result = HttpsUtils.doPost(oaUrl,json);
-        System.out.println(result);
-        resultSet.setMsg(result);
+        //接口返回的数据转化为前端响应体
+        ResultSet resultData = JsonUtils.serializable(result,ResultSet.class);
+        resultSet.setCode(resultData.getCode());
+        resultSet.setMsg(resultData.getMsg());
 
         return resultSet;
     }
