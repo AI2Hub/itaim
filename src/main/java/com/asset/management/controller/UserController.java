@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @RequestMapping("/login")
-    public ResultSet login(@RequestBody UserBo bo, HttpServletRequest request) {
+    public ResultSet login(@RequestBody UserBo bo) {
         // 登录密码
         String password = bo.getPassword();
         // 登录手机号
@@ -44,12 +44,13 @@ public class UserController {
             resultSet.setSuccess(false);
         }else if(!user.getPassword().equals(password)){
             resultSet.setSuccess(false);
+        }else {
+            //        String token = tokenService.getToken(user);
+            // 生成token代码
+            TokenUtil tokenUtil = new TokenUtil();
+            resultSet = tokenUtil.createToken(user);
+            resultSet.setSuccess(true);
         }
-//        String token = tokenService.getToken(user);
-        // 生成token代码
-        TokenUtil tokenUtil = new TokenUtil();
-        resultSet = tokenUtil.createToken(user);
-        resultSet.setSuccess(true);
         return resultSet;
     }
 

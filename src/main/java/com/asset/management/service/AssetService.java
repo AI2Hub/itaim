@@ -99,11 +99,19 @@ public class AssetService {
     }
 
     /**
+     * 编辑资产信息
+     * @param asset
+     */
+    public Asset updateAsset(Asset asset){
+        return assetDao.save(asset);
+    }
+
+    /**
      * 修改资产数据入库状态
      * @param ids
      * @return
      */
-    public void updateAsset(String ids){
+    public void updateAssetStatus(String ids){
         List idList = Arrays.asList(ids.split(","));
         idList.forEach(id ->{
             int assetId = Integer.parseInt((String) id);

@@ -147,7 +147,19 @@ public class AssetController {
     }
 
     @RequestMapping("/updateAsset")
-    public void updateAsset(@RequestParam("ids") String ids){
-        assetService.updateAsset(ids);
+    public ResultSet updateAsset(@RequestBody Asset asset){
+        ResultSet resultSet = new ResultSet();
+        Asset result = assetService.updateAsset(asset);
+        if(result != null){
+            resultSet.setSuccess(true);
+        }else {
+            resultSet.setSuccess(false);
+        }
+        return resultSet;
+    }
+
+    @RequestMapping("/updateAssetStatus")
+    public void updateAssetStatus(@RequestParam("ids") String ids){
+        assetService.updateAssetStatus(ids);
     }
 }

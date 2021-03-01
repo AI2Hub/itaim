@@ -5,7 +5,6 @@ import com.asset.management.entity.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 public class TokenUtil {
